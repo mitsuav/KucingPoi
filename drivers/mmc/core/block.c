@@ -1304,7 +1304,10 @@ static int mmc_blk_part_switch_pre(struct mmc_card *card,
 	if (part_type == EXT_CSD_PART_CONFIG_ACC_RPMB)
 		mmc_retune_pause(card->host);
 #else
-	if (part_type == EXT_CSD_PART_CONFIG_ACC_RPMB) {
+	const unsigned int mask = EXT_CSD_PART_CONFIG_ACC_MASK;
+	const unsigned int rpmb = EXT_CSD_PART_CONFIG_ACC_RPMB;
+
+	if ((part_type & mask) == rpmb) {
 		if (card->ext_csd.cmdq_en) {
 			ret = mmc_cmdq_disable(card);
 			if (ret)
@@ -1335,7 +1338,10 @@ static int mmc_blk_part_switch_post(struct mmc_card *card,
 	}
 #else
 
-	if (part_type == EXT_CSD_PART_CONFIG_ACC_RPMB) {
+	const unsigned int mask = EXT_CSD_PART_CONFIG_ACC_MASK;
+	const unsigned int rpmb = EXT_CSD_PART_CONFIG_ACC_RPMB;
+
+	if ((part_type & mask) == rpmb) {
 		mmc_retune_unpause(card->host);
 		if (card->reenable_cmdq && !card->ext_csd.cmdq_en)
 			ret = mmc_cmdq_enable(card);
