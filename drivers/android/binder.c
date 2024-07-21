@@ -3538,7 +3538,9 @@ static bool binder_proc_transaction(struct binder_transaction *t,
 	if (!thread && !pending_async)
 		thread = binder_select_thread_ilocked(proc);
 
-	if (thread)
+	if (thread) {
+		binder_transaction_priority(thread->task, t, node_prio,
+					    node->inherit_rt);
 		binder_enqueue_thread_work_ilocked(thread, &t->work);
 #ifdef CONFIG_MTK_TASK_TURBO
 		if (binder_start_turbo_inherit(t->from ?
